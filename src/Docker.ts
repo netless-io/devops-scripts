@@ -5,6 +5,10 @@ export class Docker {
     private registry: string;
     private namespace: string;
 
+    /**
+     * 
+     * @param config {registry 私有仓库， namespace 命名空间}
+     */
     public constructor(config: {registry: string, namespace: string}) {
         this.registry = config.registry;
         this.namespace = config.namespace;
