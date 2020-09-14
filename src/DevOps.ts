@@ -1,8 +1,8 @@
-const k8sCmd = require("./k8sCmd");
-const docker = require("./docker");
-const shell = require("./shell");
+import * as k8sCmd from "./k8sCmd";
+import { Docker } from "./Docker";
+import * as shell from "./shell";
 
-async function buildAndPush(dockerfile, name, tags, deleteAfter) {
+export async function buildAndPush(docker: Docker, dockerfile: string, name: string, tags: string | string[], deleteAfter: boolean): Promise<void> {
     if (typeof tags === "string") {
         tags = [tags];
     }
@@ -17,12 +17,10 @@ async function buildAndPush(dockerfile, name, tags, deleteAfter) {
     }
 }
 
-async function deployK8s(dir, yml, deployment, namespace) {
-    shell.execRemote("k8s-dev", [
+export async function deployK8s(dir: string, yml: string, deployment: string, namespace: string): Promise<void> {
+    await shell.execRemote("k8s-dev", [
         `cd ${dir}`,
         k8sCmd.apply(yml),
         k8sCmd.patch(namespace, deployment, k8sCmd.patchInfo()),
     ]);
-}
-
-module.exports = {buildAndPush, deployK8s};
+} 

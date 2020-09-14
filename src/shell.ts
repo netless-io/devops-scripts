@@ -1,19 +1,20 @@
-const child_process = require("child_process");
 
-function execSyncInDir(dir, command) {
+import child_process from "child_process";
+
+export function execSyncInDir(dir: string, command: string): string {
     return execSync(`cd ${dir} && ${command}`);
 }
 
-function execSync(command) {
+export function execSync(command: string): string {
     console.log(`execSync: ${command}`);
     return child_process.execSync(command).toString().trim();
 }
 
-async function execInDir(dir, command) {
+export async function execInDir(dir: string, command: string) {
     return exec(`cd ${dir} && ${command}`);
 }
 
-async function exec(command) {
+export async function exec(command: string): Promise<string> {
     console.log(`exec: ${command}`);
     return new Promise((resolve, reject) => {
         const cmd = child_process.exec(`${command}`, (err, stdout, stderr) => {
@@ -23,21 +24,21 @@ async function exec(command) {
                 resolve(stdout);
             }
         });
-        cmd.stderr.on("data", data => {
+        cmd.stderr!.on("data", data => {
             process.stdout.write(`${data}`);
         });
-        cmd.stdout.on("data", data => {
+        cmd.stdout!.on("data", data => {
             process.stdout.write(`${data}`);
         });
     });
 }
 
-async function execRemote(address, commands) {
+export async function execRemote(address: string, commands: string[] | any): Promise<string> {
     commands = convertArray(commands);
-    await exec(`ssh ${address} -tt ${JSON.stringify(commands.join(" && "))}`);
+    return await exec(`ssh ${address} -tt ${JSON.stringify(commands.join(" && "))}`);
 }
 
-function convertArray(commands) {
+export function convertArray<T extends string>(commands: T[] | T): T[] {
     if (!(commands instanceof Array)) {
         commands = [commands];
     }
@@ -48,11 +49,8 @@ process.on("uncaughtException", error => {
     console.error("uncaughtException: ", error);
     process.exit(3);
 });
+
 process.on("unhandledRejection", error => {
     console.error("unhandledRejection: ", error);
     process.exit(4);
 });
-
-module.exports = {
-    execSyncInDir, execSync, execInDir, exec, execRemote
-};
