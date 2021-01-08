@@ -19,6 +19,7 @@ export class Docker {
     }
     
     public async build(dockerfile: string, name: string, tagName: string) {
+        // TODO: support run script in different work path
         await shell.execInDir(path.dirname(dockerfile), `docker build --rm -f Dockerfile -t ${this.imageName(name, tagName)} .`);
     }
     
