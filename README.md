@@ -11,7 +11,7 @@ docker tag IMAGE[:TAG] [REGISTRY_HOST[:REGISTRY_PORT]/]REPOSITORY[:TAG]
 ## How to use
 
 ```js
-import {Docker, buildAndPush, deploymentK8s} from "@netless/docker-script";
+import {Docker, buildAndPush, deployK8s, patchDeployment} from "@netless/docker-script";
 
 const docker = new Docker({registry: "registry", namespace: "命名空间"});
 buildAndPush(docker, dockerfilePath, imageName, tag | tags, deleteAfter);
