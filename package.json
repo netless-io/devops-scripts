@@ -1,13 +1,13 @@
 {
   "name": "@netless/docker-script",
-  "version": "0.0.2",
-  "main": "./dist/index.js",
+  "version": "0.0.3",
+  "main": "dist/index.js",
   "author": "leavesster <11785335+leavesster@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc"
   },
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "devDependencies": {
     "node": "^14.10.1",
     "typescript": "^4.0.2"
