@@ -1,21 +1,16 @@
 import * as shell from "./shell";
 import path from "path";
+import { DockerRegistry } from "./config";
 
 export class Docker {
-    private registry: string;
-    private namespace: string;
-
-    /**
-     * 
-     * @param config {registry 私有仓库， namespace 命名空间}
-     */
-    public constructor(config: {registry: string, namespace: string}) {
-        this.registry = config.registry;
-        this.namespace = config.namespace;
+    private registry: DockerRegistry
+    
+    public constructor(config: DockerRegistry) {
+        this.registry = config;
     }
 
     public imageName(name: string, tag: string) {
-        return `${this.registry}/${this.namespace}/${name}:${tag}`;
+        return `${this.registry.auth}/${this.registry.namespace}/${name}:${tag}`;
     }
     
     public async build(dockerfile: string, name: string, tagName: string) {
