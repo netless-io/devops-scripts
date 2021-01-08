@@ -18,12 +18,13 @@ export function getDeployName(yml: string) {
 }
 
 // 目前支持的 kind，不支持 ingress 和 service
-export type Kind = "deployment" | "statefulset"
+export type Kind = "deployment" | "statefulset" | "job";
 
-export function findKind(yml: string) {
+export function findKind(yml: string): Kind {
     const kind = findFirstValue(yml, "kind").toLowerCase();
-    if (kind !== "deployment" || "statefulset") {
+    if (!["deployment", "statefulset", "job"].includes(kind)) {
         console.error(`${kind} is not support`);
         process.exit(111);
     }
+    return kind as Kind;
 }

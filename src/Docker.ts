@@ -1,6 +1,6 @@
 import * as shell from "./shell";
 import path from "path";
-import { DockerRegistry } from "./config";
+import { DockerRegistry } from "./Config";
 
 export class Docker {
     private registry: DockerRegistry
