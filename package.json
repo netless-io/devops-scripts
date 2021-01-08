@@ -1,6 +1,6 @@
 {
   "name": "@netless/docker-script",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "author": "leavesster <11785335+leavesster@users.noreply.github.com>",
   "license": "MIT",
