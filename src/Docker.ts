@@ -20,7 +20,7 @@ export class Docker {
     
     public async build(dockerfile: string, name: string, tagName: string) {
         // TODO: support run script in different work path
-        await shell.execInDir(path.dirname(dockerfile), `docker build --rm -f Dockerfile -t ${this.imageName(name, tagName)} .`);
+        await shell.execInDir(path.dirname(dockerfile), `docker build --rm -f ${path.basename(dockerfile)} -t ${this.imageName(name, tagName)} .`);
     }
     
     public tag(name: string, originalTag: string, newTag: string) {
