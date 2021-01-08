@@ -37,7 +37,7 @@ export async function buildAndPush(docker: Docker, dockerfile: string, imageName
  */
 export async function deployK8s(cluster: string, dir: string, yml: string, deployment: string, namespace?: string): Promise<void> {
     // TODO: 根据 dir 与 yml，读取 deployment，namespace 等信息
-    await shell.execRemote(cluster, [
+    await shell.execSSH(cluster, [
         `cd ${dir}`,
         k8sCmd.apply(yml),
         k8sCmd.patch(namespace, deployment, k8sCmd.patchInfo()),
@@ -53,7 +53,7 @@ export async function deployK8s(cluster: string, dir: string, yml: string, deplo
  * @param namespace deployment 对应的 namespace
  */
 export async function patchDeployment(cluster: string, deployment: string, namespace?: string) {
-    await shell.execRemote(cluster, [
+    await shell.execSSH(cluster, [
         k8sCmd.patch(namespace, deployment, k8sCmd.patchInfo()),
     ]);
 }

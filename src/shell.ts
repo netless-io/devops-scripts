@@ -1,4 +1,3 @@
-
 import child_process from "child_process";
 
 export function execSyncInDir(dir: string, command: string): string {
@@ -24,33 +23,23 @@ export async function exec(command: string): Promise<string> {
                 resolve(stdout);
             }
         });
-        cmd.stderr!.on("data", data => {
+        cmd.stderr?.on("data", data => {
             process.stdout.write(`${data}`);
         });
-        cmd.stdout!.on("data", data => {
+        cmd.stdout?.on("data", data => {
             process.stdout.write(`${data}`);
         });
     });
 }
 
-export async function execRemote(address: string, commands: string[] | any): Promise<string> {
+export async function execSSH(address: string, commands: string[] | any): Promise<string> {
     commands = convertArray(commands);
     return await exec(`ssh ${address} -tt ${JSON.stringify(commands.join(" && "))}`);
 }
 
-export function convertArray<T extends string>(commands: T[] | T): T[] {
+function convertArray<T extends string>(commands: T[] | T): T[] {
     if (!(commands instanceof Array)) {
         commands = [commands];
     }
     return commands;
 }
-
-process.on("uncaughtException", error => {
-    console.error("uncaughtException: ", error);
-    process.exit(3);
-});
-
-process.on("unhandledRejection", error => {
-    console.error("unhandledRejection: ", error);
-    process.exit(4);
-});
