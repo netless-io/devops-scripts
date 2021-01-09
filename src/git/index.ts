@@ -1,0 +1,1 @@
+export {gitDiff, applyDiff, DiffInfo} from "./diff";

@@ -1,9 +1,9 @@
-import { execSSH, execSync } from "./shell";
-import { findKind, getDeployName, getNamespace } from "./yml";
-import { SSHConfig } from "./Config";
-import { patchInfo } from "./k8sCmd";
+import { execSSH, execSync } from "../utils/shell";
+import { findFirstKind, findFirstDeployName, findFirstNamespace } from "./yml";
+import { SSHConfig } from "../config";
+import { patchInfo } from "../deploy/k8sCmd";
 
-type DiffInfo = {
+export type DiffInfo = {
     change: string;
     file: string;
 }
@@ -22,7 +22,7 @@ export function gitDiff(): DiffInfo[] {
 
 export async function applyDiff(config: SSHConfig, diffs: DiffInfo[]) {
 
-    // Ubuntu/Linux need it
+    // Ubuntu/Linux need run eval $(ssh-agent)
     execSync(`eval $(ssh-agent) && ssh-add`);
     for await (const d of diffs) {
         await apply(d.change, d.file);
@@ -35,21 +35,21 @@ export async function applyDiff(config: SSHConfig, diffs: DiffInfo[]) {
         }
 
         console.log(`change: ${change} yaml:${yml}`);
-        let namespace = getNamespace(yml);
+        let namespace = findFirstNamespace(yml);
     
         change = change.toUpperCase();
-        const kind = findKind(yml);
+        const kind = findFirstKind(yml);
     
         if (change === "A") {
             await execSSH(config.host, [`cd ${config.dir}`, `kubectl apply -f ${yml}`]);
         } if (change === "D") {
-            // TODO: 通过 git show 读取内容，进行 delete（要支持多个内容的 delete）
+            // TODO: use git show to delete delete file content yml
         } if (change === "M" && kind === "job") {
-            // job 要先删除，然后再 apply
+            // job is complete, need delete before apply
             const command = `cd ${config.dir} && kubectl delete -f ${yml} && kubectl apply -f ${yml}`;
             await execSSH(config.host, command);
         } else if (change === "M") {
-            const deployName = getDeployName(yml);
+            const deployName = findFirstDeployName(yml);
             await execSSH(config.host, `cd ${config.dir} && kubectl apply -f ${yml}`);
             if (kind === "deployment" || kind === "statefulset") {
                 const command = `cd ${config.dir} && kubectl patch ${kind}/${deployName} -n ${namespace} --patch ${patchInfo()}`.replace(/\"/g, "\\\"");

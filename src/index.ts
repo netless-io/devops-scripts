@@ -1,7 +1,6 @@
-export * from "./devOps";
-export * from "./Docker";
-export * from "./k8sCmd";
-export * from "./shell";
+export * from "./git";
+export * from "./deploy";
+export * from "./config";
 export * from "./utils";
 
 process.on("uncaughtException", error => {

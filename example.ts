@@ -1,10 +1,11 @@
-# docker-scripts
+// import {} from "@netless/devops-scripts";
 
-## How to use
+/**
+ * just apply one image and deploy it from its source repo
+ */
 
-* develop
+import {deployK8s, Docker, patchDeployment} from "./src";
 
-```typescript
 const docker = new Docker({auth: 'https://registry.domain.com', namespace: "mynamespace"});
 docker.buildAndPush("dockerfilePath", "imageName", "latest" || ["latest", "1.0.0-commit"], true);
 
@@ -12,22 +13,15 @@ docker.buildAndPush("dockerfilePath", "imageName", "latest" || ["latest", "1.0.0
 deployK8s("k8s-dev", "repo", "/app.yaml", "deployment-name","namespace");
 // or just patch, because image not change
 patchDeployment("k8s-cluster", "demo", "default");
-```
 
-* yaml repo
 
-```typescript
+/*
+ * git for yaml repo
+ */
+
 import {gitDiff, applyDiff, SSHConfig} from "./src";
 
 const config: SSHConfig = {host: "k8s-cluster"};
 (async () => {
     await applyDiff(config, gitDiff());
 })();
-```
-
-## TODO:
-
-- [ ] delete `D` yaml's deployment statefulset ingress service
-- [ ] support handle all yaml kind, not just first
-- [ ] check kind support operation
-- [ ] deployK8s not need deployment and name, just need yaml.

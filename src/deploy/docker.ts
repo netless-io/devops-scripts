@@ -1,12 +1,35 @@
-import * as shell from "./shell";
+import * as shell from "../utils/shell";
 import path from "path";
-import { DockerRegistry } from "./Config";
+import { DockerRegistry } from "../config";
 
 export class Docker {
     private registry: DockerRegistry
     
     public constructor(config: DockerRegistry) {
         this.registry = config;
+    }
+
+    /**
+     * 
+     * @param docker 构建出来带 registry，namespace 的镜像地址
+     * @param dockerfile dockerfile 路径，如果是相对路径，应该以 node 执行位置为准
+     * @param imageName 镜像名
+     * @param tags 镜像 tag，可以为 string，单个 tag，或者多个 tag 名称
+     * @param deleteAfter push 完后，是否删除本地镜像
+     */
+    public async buildAndPush(dockerfile: string, imageName: string, tags: string | string[], deleteAfter: boolean): Promise<void> {
+        if (typeof tags === "string") {
+            tags = [tags];
+        }
+
+        await this.build(dockerfile, imageName, tags[0]);
+        tags.filter(t => t !== tags[0]).map(t => {
+            this.tag(imageName, tags[0], t);
+        });
+        await this.push(imageName, tags);
+        if (deleteAfter) {
+            await this.rmImage(imageName, tags);
+        }
     }
 
     public imageName(name: string, tag: string) {
@@ -30,8 +53,8 @@ export class Docker {
             await shell.exec(`docker push ${this.imageName(name, tag)}`);
         }
     }
-    
-    public async rmi(name: string, tags: string | string[]) {
+
+    public async rmImage(name: string, tags: string | string[]) {
         if (typeof tags === "string") {
             tags = [tags];
         }
@@ -39,5 +62,4 @@ export class Docker {
             await shell.exec(`docker rmi ${this.imageName(name, tag)}`);
         }
     }
-
 }

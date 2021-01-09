@@ -1,26 +1,27 @@
-import { execSync } from "./shell";
+import { execSync } from "../utils/shell";
 
 export function findFirstValue(file: string, key: string) {
-    // 忽视空格缩进，选择第一个出现的作为值
+    // ignore space
     let value = execSync(`grep '[^\S]*${key}:' ${file} | head -n 1`);
     console.log(`path:${file} key:${key} value:${value}`);
     value = value.replace(" ", "");
     return value.split(":")[1];
 }
 
-export function getNamespace(yml: string) {
+export function findFirstNamespace(yml: string) {
     return findFirstValue(yml, "namespace");
 }
 
-export function getDeployName(yml: string) {
-    findKind(yml);
+export function findFirstDeployName(yml: string) {
+    // warning
+    findFirstKind(yml);
     return findFirstValue(yml, "name");
 }
 
-// 目前支持的 kind，不支持 ingress 和 service
+// current support kind，not support ingress and service
 export type Kind = "deployment" | "statefulset" | "job";
 
-export function findKind(yml: string): Kind {
+export function findFirstKind(yml: string): Kind {
     const kind = findFirstValue(yml, "kind").toLowerCase();
     if (!["deployment", "statefulset", "job"].includes(kind)) {
         console.error(`${kind} is not support`);

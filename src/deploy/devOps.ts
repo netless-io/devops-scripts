@@ -1,29 +1,5 @@
 import * as k8sCmd from "./k8sCmd";
-import { Docker } from "./Docker";
-import * as shell from "./shell";
-
-/**
- * 
- * @param docker 构建出来带 registry，namespace 的镜像地址
- * @param dockerfile dockerfile 路径，如果是相对路径，应该以 node 执行位置为准
- * @param imageName 镜像名
- * @param tags 镜像 tag，可以为 string，单个 tag，或者多个 tag 名称
- * @param deleteAfter push 完后，是否删除本地镜像
- */
-export async function buildAndPush(docker: Docker, dockerfile: string, imageName: string, tags: string | string[], deleteAfter: boolean): Promise<void> {
-    if (typeof tags === "string") {
-        tags = [tags];
-    }
-
-    await docker.build(dockerfile, imageName, tags[0]);
-    tags.filter(t => t !== tags[0]).map(t => {
-        docker.tag(imageName, tags[0], t);
-    });
-    await docker.push(imageName, tags);
-    if (deleteAfter) {
-        await docker.rmi(imageName, tags);
-    }
-}
+import * as shell from "../utils/shell";
 
 /**
  * 
