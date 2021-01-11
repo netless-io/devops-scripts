@@ -1,11 +1,11 @@
 {
   "name": "@netless/devops-scripts",
-  "version": "0.0.5", 
+  "version": "0.0.6", 
   "main": "dist/index.js",
   "author": "leavesster <11785335+leavesster@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "rm -rf ./dist && tsc"
   },
   "types": "dist/index.d.ts",
   "devDependencies": {
