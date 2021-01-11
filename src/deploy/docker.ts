@@ -23,9 +23,10 @@ export class Docker {
         }
 
         await this.build(dockerfile, imageName, tags[0]);
-        tags.filter(t => t !== tags[0]).map(t => {
-            this.tag(imageName, tags[0], t);
+        const tagTask = tags.filter(t => t !== tags[0]).map(async (t) => {
+           await this.tag(imageName, tags[0], t);
         });
+        await Promise.all(tagTask);
         await this.push(imageName, tags);
         if (deleteAfter) {
             await this.rmImage(imageName, tags);
@@ -36,9 +37,17 @@ export class Docker {
         return `${this.registry.auth}/${this.registry.namespace}/${name}:${tag}`;
     }
     
-    public async build(dockerfile: string, name: string, tagName: string) {
+    public async build(dockerfile: string, name: string, tagName: string | string[]) {
+
+        if (typeof tagName === "string") {
+            tagName = [tagName];
+        }
         // TODO: support run script in different work path
-        await shell.execInDir(path.dirname(dockerfile), `docker build --rm -f ${path.basename(dockerfile)} -t ${this.imageName(name, tagName)} .`);
+        await shell.execInDir(path.dirname(dockerfile), `docker build --rm -f ${path.basename(dockerfile)} -t ${this.imageName(name, tagName[0])} .`);
+        const tagTask = tagName.filter(t => t !== tagName[0]).map(async (t) => {
+            await this.tag(name, tagName[0], t);
+         });
+         await Promise.all(tagTask);
     }
     
     public tag(name: string, originalTag: string, newTag: string) {
