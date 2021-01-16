@@ -5,6 +5,7 @@
 * develop
 
 ```typescript
+import {Docker, deployK8s, patchDeployment} from "@netless/devops-scripts";
 const docker = new Docker({auth: 'https://registry.domain.com', namespace: "mynamespace"});
 docker.buildAndPush("dockerfilePath", "imageName", "latest" || ["latest", "1.0.0-commit"], true);
 
@@ -17,13 +18,15 @@ patchDeployment("k8s-cluster", "demo", "default");
 * yaml repo
 
 ```typescript
-import {gitDiff, applyDiff, SSHConfig} from "./src";
+import {gitDiff, applyDiff, SSHConfig} from "@netless/devops-scripts";
 
 const config: SSHConfig = {host: "k8s-cluster"};
 (async () => {
     await applyDiff(config, gitDiff());
 })();
 ```
+
+more example see `./exmaple.ts`
 
 ## TODO:
 
